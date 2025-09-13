@@ -1,14 +1,10 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven 3.8.7'   // Use the name you configured in Jenkins
-    }
-
     environment {
-        DOCKER_HUB_USER = 'naren3005'     // Your Docker Hub username
-        IMAGE_NAME = 'netflix'            // Your Docker image name
-        IMAGE_TAG = 'v1'                  // Your Docker image tag
+        DOCKER_HUB_USER = 'naren3005'
+        IMAGE_NAME = 'netflix'
+        IMAGE_TAG = 'v1'
     }
 
     stages {
@@ -18,9 +14,11 @@ pipeline {
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build with Maven (via Docker)') {
             steps {
-                sh 'mvn clean package'
+                sh '''
+                    docker run --rm -v "$PWD":/app -w /app maven:3.8.7-openjdk-17 mvn clean package
+                '''
             }
         }
 
@@ -33,7 +31,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker', // Replace with your Jenkins credential ID
+                    credentialsId: 'docker',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
