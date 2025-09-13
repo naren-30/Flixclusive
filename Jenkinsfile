@@ -3,14 +3,14 @@ pipeline {
 
     environment {
         DOCKER_HUB_USER = 'naren3005'     // your Docker Hub username
-        IMAGE_NAME = 'hotstar'            // your Docker Hub repository
+        IMAGE_NAME = 'netflix'            // your Docker Hub repository
         IMAGE_TAG = 'v1'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/naren-30/java-project-maven-new.git'
+                git 'https://github.com/naren-30/Flixclusive.git'
             }
         }
 
@@ -42,10 +42,10 @@ pipeline {
     steps {
         sh '''
         docker swarm init || true
-        docker service rm hotserv || true
+        docker service rm netserv || true
         docker service create \
        --name hotserv \
-       --publish published=8008,target=8080 \
+       --publish published=8009,target=8080 \
        --replicas 3 \
           $DOCKER_HUB_USER/$IMAGE_NAME:$IMAGE_TAG
         '''
